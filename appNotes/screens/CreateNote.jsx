@@ -1,6 +1,9 @@
-import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import { createNoteStyles } from '../styles/createNoteStyles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 export default function CreateNote() {
 
@@ -8,9 +11,55 @@ export default function CreateNote() {
   const [descorta, setDescorta] = useState('');
   const [fecha, setFecha] = useState('');
   const [descripcion, setDescripcion] = useState('');
+  const [showDateSpiker, setShowDateSpiker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
-  const saveNote = () => {
-    Alert.alert('Importante', 'Esto es una prueba')
+  const showDateSpikerHandle = () => {
+    setShowDateSpiker(true);
+  };
+
+  const onDatechange = (event, date) => {
+    setShowDateSpiker(Platform.OS === 'ios');
+    if(event.type !== 'dismissed' && date){
+      setSelectedDate(date);
+      setFecha(date.toLocaleDateString('es-ES'));
+    }
+  };
+
+  const saveNote = async() => {
+
+    if(!titulo || !descorta || !fecha || !descripcion){
+      Alert.alert('Error', 'Llenar todos los campos');
+      return;
+    }
+
+
+    try {
+      const newNote = {
+        id: Date.now().toString(),
+        titulo,
+        descorta,
+        fecha,
+        descripcion
+      };
+
+      const storeNotes = await  AsyncStorage.getItem('notas');
+      const notes  = storeNotes ? JSON.parse(storeNotes) : [];
+
+      notes.push(newNote);
+
+      await AsyncStorage.setItem('notas', JSON.stringify(notes));
+
+      //Limiar los campos
+      setTitulo('');
+      setDescorta('');
+      setFecha('');
+      setDescripcion('');
+      
+    } catch (error) {
+      console.log(`Error alguardar la nota ${error}`);
+      Alert.alert('Error', 'Error alguardar')
+    };
   };
 
   return (
@@ -20,7 +69,22 @@ export default function CreateNote() {
         <View style={createNoteStyles.card}>
           <TextInput style={createNoteStyles.input} placeholder='Titulo' placeholderTextColor='slategray' value={titulo} onChangeText={setTitulo}/>
           <TextInput style={createNoteStyles.input} placeholder='Descripcion Corta' placeholderTextColor='slategray' value={descorta} onChangeText={setDescorta}/>
-          <TextInput style={createNoteStyles.input} placeholder='Fecha' placeholderTextColor='slategray' value={fecha} onChangeText={setFecha}/>
+  
+          <Pressable onPress={showDateSpikerHandle} style={createNoteStyles.input}>
+            <TextInput placeholder='Fecha' placeholderTextColor='slategray' value={fecha} onChangeText={setFecha} editable={false} style={{marginTop: 10}}/>
+          </Pressable>
+          {
+            showDateSpiker && (
+              <DateTimePicker
+                value={selectedDate}
+                mode='date'
+                onChange={onDatechange}
+                minimumDate={new Date()}
+                display='default'
+              />
+            )
+          }
+
           <TextInput style={createNoteStyles.input} placeholder='Descripcion' placeholderTextColor='slategray' value={descripcion} onChangeText={setDescripcion}/>
 
           <Pressable style={createNoteStyles.button} onPress={saveNote}>
