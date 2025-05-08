@@ -1,27 +1,27 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Alert, Button, Image, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { homeStyles } from './styles/homeStyles';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <View>
-        <Text style={styles.title}>Este es nuestro titulo</Text>
-      </View>
-      <Text>Open up App.js to start working on your app!</Text>
-    </View>
+    <ScrollView >
+      <ImageBackground resizeMode='cover' source={{uri: 'https://th.bing.com/th/id/OIP.MS5FviWFihNjcQbymAboBAAAAA?cb=iwc1&rs=1&pid=ImgDetMain'}}>
+        <View>
+          <Text style={homeStyles.title}>Este es nuestro titulo</Text>
+        </View>
+        <Text>Open up App.js to start working on your app!</Text>
+      </ImageBackground>      
+
+      <Pressable style={homeStyles.button} onPress={() => Alert.alert('Alerta', 'Ocurrio un Error')}>
+          <Text style={homeStyles.buttonLabel}>Este es un boton personalizado</Text>
+      </Pressable>
+    </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 700,
-    color: 'blue'
-  }
-});
+
+// <Button title='Este es un boton' color='#f194ff' onPress={() => Alert.alert('Alerta', 'Ocurrio un Error')}/>
+// <Image source={{ uri: 'https://th.bing.com/th/id/OIP.MS5FviWFihNjcQbymAboBAAAAA?cb=iwc1&rs=1&pid=ImgDetMain'}}
+//         style={homeStyles.logo}
+//       />
+//       <Image source={require('./assets/OIP.jpeg')} style={homeStyles.logo} />
