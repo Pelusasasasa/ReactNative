@@ -1,4 +1,4 @@
-import CustomBotton from '@/components/shred/CustomBotton'
+import CustomBotton from '@/components/shared/CustomBotton'
 import { router } from 'expo-router'
 import React from 'react'
 import { SafeAreaView, View } from 'react-native'
@@ -8,21 +8,21 @@ const HomeScreen = () => {
     <SafeAreaView>
       <View className='px-10 mt-5'>
 
-        <CustomBotton className='mb-5' color="primary" onPress={ () => router.push('/products')}>
+        <CustomBotton className='mb-5' color="primary" onPress={ () => router.push('/tabs/(stack)/products')}>
           Productos
         </CustomBotton>
 
         <CustomBotton 
           className='mb-5 border border-gray-300' 
           color='secondary'
-          onPress={ () => router.push('/profile')}>
+          onPress={ () => router.push('/tabs/(stack)/profile')}>
           Perfil
         </CustomBotton>
 
         <CustomBotton 
           className='mb-5 border border-gray-300'
           color='tertiary'
-          onPress={ () => router.push('/settings')}>
+          onPress={ () => router.push('/tabs/(stack)/settings')}>
           Ajustes
         </CustomBotton>
       </View>
