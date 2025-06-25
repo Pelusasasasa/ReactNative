@@ -8,22 +8,28 @@ const HomeScreen = () => {
     <SafeAreaView>
       <View className='px-10 mt-5'>
 
-        <CustomBotton className='mb-5' color="primary" onPress={ () => router.push('/tabs/(stack)/products')}>
+        <CustomBotton className='mb-5' color="primary" onPress={ () => router.push('/products')}>
           Productos
         </CustomBotton>
 
         <CustomBotton 
           className='mb-5 border border-gray-300' 
           color='secondary'
-          onPress={ () => router.push('/tabs/(stack)/profile')}>
+          onPress={ () => router.push('/profile')}>
           Perfil
         </CustomBotton>
 
         <CustomBotton 
           className='mb-5 border border-gray-300'
           color='tertiary'
-          onPress={ () => router.push('/tabs/(stack)/settings')}>
+          onPress={ () => router.push('/settings')}>
           Ajustes
+        </CustomBotton>
+        <CustomBotton 
+          className='mb-5 border border-gray-300'
+          color='primary'
+          onPress={ () => router.push('/settings')}>
+          Abrir Menu
         </CustomBotton>
       </View>
     </SafeAreaView>
