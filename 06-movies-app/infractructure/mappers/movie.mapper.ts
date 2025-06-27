@@ -1,4 +1,5 @@
-import { CompleteMovie, Movie } from "../interfaces/movie.interfaces";
+import { Cast, CompleteMovie, Movie } from "../interfaces/movie.interfaces";
+import { MovieDBCast } from "../interfaces/moviedb-credits-response";
 import { MovieDBmovieResponse } from "../interfaces/moviedb-movie-response";
 import { Result } from "../interfaces/moviedb-responses";
 
@@ -30,6 +31,17 @@ export class MovieMapper {
             originalTitle: movie.original_title,
             productionCompanies: movie.production_companies.map(c => c.name)
 
+        }
+    }
+
+    static fromMovieDBCastToEntity = (actor: MovieDBCast): Cast => {
+        return {
+            id: actor.id,
+            name: actor.name,
+            character: actor.character ?? 'No Caracter',
+            avatar: actor.profile_path 
+            ? `https://image.tmdb.org/t/p/w500${actor.profile_path}`
+            : 'https://i.stack.imgur.com/l60Hf.png'
         }
     }
 }

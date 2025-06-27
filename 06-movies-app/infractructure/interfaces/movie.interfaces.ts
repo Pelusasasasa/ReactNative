@@ -14,4 +14,11 @@ export interface CompleteMovie extends Movie {
     budget: number;
     originalTitle: string;
     productionCompanies: string[];
+};
+
+export interface Cast {
+    id: number;
+    name: string;
+    character: string;
+    avatar: string;
 }
