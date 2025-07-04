@@ -1,4 +1,3 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
@@ -7,6 +6,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 
 import { allRoutes } from '@/constants/Routes';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { ThemedChangerProvider } from '@/presentation/context/ThemedChangerContext';
 import { Stack } from 'expo-router';
 import '../global.css';
 
@@ -24,30 +24,30 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: backgroundColor }}>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack screenOptions={{
-        headerShadowVisible: false,
-        contentStyle: {
-          backgroundColor: backgroundColor
-        },
-        headerStyle: {
-          backgroundColor: backgroundColor
-        }
-      }}>
-        <Stack.Screen name='index' options={{title: ''}}/>
-        {
-          allRoutes.map(({title, name}) => (
-            <Stack.Screen
-              key={name}
-              name={name}
-              options={{
-                title
-              }}
-            />
-          ))
-        }
-      </Stack>
-    </ThemeProvider>
+      <ThemedChangerProvider>
+        <Stack screenOptions={{
+          headerShadowVisible: false,
+          contentStyle: {
+            backgroundColor: backgroundColor
+          },
+          headerStyle: {
+            backgroundColor: backgroundColor
+          }
+        }}>
+          <Stack.Screen name='index' options={{title: ''}}/>
+          {
+            allRoutes.map(({title, name}) => (
+              <Stack.Screen
+                key={name}
+                name={name}
+                options={{
+                  title
+                }}
+              />
+            ))
+          }
+        </Stack>
+    </ThemedChangerProvider>
     </GestureHandlerRootView>
   );
 }
