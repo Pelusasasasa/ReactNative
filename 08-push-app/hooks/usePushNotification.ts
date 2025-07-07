@@ -1,6 +1,7 @@
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
+import { useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 
 
@@ -88,11 +89,45 @@ async function sendPushNotification(options: sendPushOptions) {
   }
   
 
-
+let areListenersRead = false;
 
 export const usePushNotification = () => {
 
+    const [expoPushToken, setExpoPushToken] = useState('');
+    const [notifications, setNotifications] = useState<Notifications.Notification[]>([]);
+
+    useEffect(() => {
+      registerForPushNotificationsAsync()
+        .then(token => setExpoPushToken(token ?? ''))
+        .catch((error: any) => setExpoPushToken(`${error}`));
+    }, []);
+
+    useEffect(() => {
+      if(areListenersRead) return;
+
+      areListenersRead = true
+      const notificationListener = Notifications.addNotificationReceivedListener(notification => {
+            setNotifications((prevNotifications) => [notification, ...prevNotifications]);
+        });
+
+        
+      const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
+        console.log(response);
+      });
+
+      return () => {
+        notificationListener.remove();
+        responseListener.remove();
+      };
+    }, [])
+    
+
   return {
+    expoPushToken,
+    notifications,
+
+    //Metodos
+    sendPushNotification,
 
   }
 }
