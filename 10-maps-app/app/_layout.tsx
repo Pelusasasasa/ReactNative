@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/presentation/hooks/useColorScheme';
+import PermissionCheckerProvider from '@/presentation/provider/PermissionCheckerProvider';
 import { useEffect } from 'react';
 
 SplashScreen.preventAutoHideAsync();
@@ -28,13 +29,15 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack screenOptions={{headerShown: false}}>
-        <Stack.Screen name='loading/index' options={{ animation: 'none'}}/>
-        <Stack.Screen name='map/index' options={{ animation: 'fade'}}/>
-        <Stack.Screen name='permission/index' options={{ animation: 'fade'}}/>
-        
-      </Stack>
-      <StatusBar style="auto" />
+      <PermissionCheckerProvider>
+        <Stack screenOptions={{headerShown: false}}>
+          <Stack.Screen name='loading/index' options={{ animation: 'none'}}/>
+          <Stack.Screen name='map/index' options={{ animation: 'fade'}}/>
+          <Stack.Screen name='permission/index' options={{ animation: 'fade'}}/>
+          
+        </Stack>
+        <StatusBar style="auto" />
+      </PermissionCheckerProvider>
     </ThemeProvider>
   );
 }
