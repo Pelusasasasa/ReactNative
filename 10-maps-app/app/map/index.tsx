@@ -1,19 +1,32 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import MapView from 'react-native-maps';
+import React, { useEffect } from 'react';
+import { ActivityIndicator, View } from 'react-native';
+
+import CustomMap from '@/presentation/components/maps/CustomMap';
+import { useLocationStore } from '@/presentation/store/useLocationstore';
 
 const MapScreen = () => {
+
+  const { lastKnownLocation, getLocation } = useLocationStore();
+
+  useEffect(() => {
+    if(!lastKnownLocation) {
+      getLocation();
+    }
+  }, []);
+
+  if (!lastKnownLocation) {
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator/>
+      </View>
+    )
+  }
+
   return (
-    <View style={styles.container}>
-      <MapView
-      // -30.762091, -57.994706
-      style={styles.map} 
-      initialRegion={{
-        latitude: -30.762091,
-        longitude: -57.994706,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      }}
+    <View>
+      <CustomMap
+        initialLocation={lastKnownLocation}
+        
       />
     </View>
   )
@@ -21,12 +34,3 @@ const MapScreen = () => {
 
 export default MapScreen;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  map: {
-    width: '100%',
-    height: '100%'
-  }
-})
