@@ -1,3 +1,4 @@
+import { authCheckStatus, authLogin } from "@/core/auth/actions/auth-actions";
 import { User } from "@/core/auth/interface/user";
 import { create } from 'zustand';
 
@@ -11,23 +12,44 @@ interface AuthState{
     login: (email: string, password: string) => Promise<boolean>;
     checkStatus: () => Promise<void>;
     logOut: () => Promise<void>;
+
+    changeStatus: (token?:string, user?:User) => boolean;
 };
 
 
-
-export const usetemplateStore = create<AuthState>()((set) => ({
+export const useAuthStore = create<AuthState>()((set, get) => ({
     status: 'checking',
     token: undefined,
     user: undefined,
+    
 
-    login: async(email: string, password: string) => {
+    changeStatus: (token?: string, user?: User) => {
+        
+        if(!token || !user) {
+            set({ status: 'not-authenticated', token: undefined, user: undefined});
+            return false;
+        }
+
+        set({ status: 'authenticated', token: token, user: user });
+
         return true
     },
-    checkStatus: async() => {
-    
-    },
-    logOut: async() => {
+
+    login: async(email: string, password: string) => {
+        const resp = await authLogin(email, password);
+
+        return get().changeStatus(resp?.token, resp?.user)
         
+    },
+
+    checkStatus: async() => {
+        const resp = await authCheckStatus();
+
+        get().changeStatus(resp?.token, resp?.user)
+    },
+
+    logOut: async() => {
+        set({status: 'not-authenticated', token: undefined, user: undefined})
     }
 }))
 
