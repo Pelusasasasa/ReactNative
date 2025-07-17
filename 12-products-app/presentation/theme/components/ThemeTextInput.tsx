@@ -34,7 +34,7 @@ const ThemeTextInput = ({icon, ...rest}: Props) => {
         )}
         <TextInput
             ref={inputRef}
-            placeholderTextColor='#5c5c5c5'
+            placeholderTextColor={textColor}
             onFocus={() => setIsActive(true) }
             onBlur={() => setIsActive(false) }
             style = {{
