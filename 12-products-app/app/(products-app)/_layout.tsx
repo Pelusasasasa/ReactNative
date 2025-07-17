@@ -6,9 +6,9 @@ import { ActivityIndicator, View } from 'react-native';
 const CheckAuthenticationLayout = () => {
 
     const { checkStatus, status} = useAuthStore();
-    console.log(status)
+    
     useEffect(() => {
-        // checkStatus();
+        checkStatus();
     }, [])
 
     if(status === 'checking'){
