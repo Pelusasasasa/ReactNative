@@ -33,5 +33,5 @@ productosApi.interceptors.request.use(async (config) => {
 })
 
 
-export { productosApi };
+export { API_URL, productosApi };
 

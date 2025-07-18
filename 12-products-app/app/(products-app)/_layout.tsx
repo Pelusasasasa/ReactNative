@@ -25,7 +25,6 @@ const CheckAuthenticationLayout = () => {
             </View>
         )
     };
-
     if( status === 'not-authenticated'){
         return <Redirect href='/auth/login' />
     };
