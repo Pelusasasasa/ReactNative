@@ -1,15 +1,39 @@
+import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
 import ThemedButton from '@/presentation/theme/components/ThemedButton';
 import ThemedLink from '@/presentation/theme/components/ThemedLink';
 import { ThemedText } from '@/presentation/theme/components/ThemedText';
 import ThemeTextInput from '@/presentation/theme/components/ThemeTextInput';
 import { useThemeColor } from '@/presentation/theme/hooks/useThemeColor';
-import React from 'react';
+import { router } from 'expo-router';
+import React, { useState } from 'react';
 import { KeyboardAvoidingView, ScrollView, useWindowDimensions, View } from 'react-native';
 
 const RegisterScreen = () => {
-
+  const { register } = useAuthStore();
   const { height } = useWindowDimensions();
   const backgroudColor = useThemeColor({}, 'background')
+
+  const [isPosting, setIsPosting] = useState<boolean>(false);
+  const [ form, setForm] = useState({
+    email: '',
+    password: '',
+    fullName: ''
+  });
+
+  const onRegister = async() => {
+    const {email, password, fullName} = form;
+
+    if(email.length === 0 || password.length === 0 || fullName.length < 3) return;
+
+    setIsPosting(true);
+    const wasSuccessfull = await register(email, password, fullName)
+    setIsPosting(false);
+
+    if(wasSuccessfull){
+      router.replace('/')
+      return;
+    }
+  }
   return (
     <KeyboardAvoidingView behavior='padding' style={{flex: 1}}>
       <ScrollView style={{paddingHorizontal: 40, backgroundColor: backgroudColor}}>
@@ -25,6 +49,8 @@ const RegisterScreen = () => {
             keyboardType='default'
             autoCapitalize='words'
             icon='person-outline'
+
+            onChangeText={(value) => setForm({...form, fullName: value})}
           />
 
           <ThemeTextInput
@@ -32,6 +58,8 @@ const RegisterScreen = () => {
             keyboardType='email-address'
             autoCapitalize='none'
             icon='mail-outline'
+
+            onChangeText={(value) => setForm({...form, email: value})}
           />
 
           <ThemeTextInput
@@ -39,12 +67,14 @@ const RegisterScreen = () => {
             secureTextEntry
             autoCapitalize='none'
             icon='lock-closed-outline'
+
+            onChangeText={(value) => setForm({...form, password: value})}
           />
         </View>
 
         <View style={{marginVertical: 10}}/>
 
-        <ThemedButton icon='arrow-forward-outline'>
+        <ThemedButton onPress={onRegister}  disabled={isPosting} icon='arrow-forward-outline'>
           Crear Usuario
         </ThemedButton>
 

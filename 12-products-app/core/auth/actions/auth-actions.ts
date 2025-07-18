@@ -42,7 +42,22 @@ export const authLogin  = async(email: string, password: string) => {
         // throw new Error('Error al iniciar sesión');
         return null
     }
-}
+};
+
+export const authRegister = async(email: string, password: string, fullName: string) => {
+    email.toLowerCase();
+
+    try {
+        const { data } = await productosApi.post<AuthResponse>('/auth/register', {
+            email, password, fullName
+        });
+
+        return returnUserToken(data);
+    } catch (error) {
+        console.log(error);
+        return null
+    }
+};
 
 
 export const authCheckStatus = async() => {
@@ -52,4 +67,4 @@ export const authCheckStatus = async() => {
     } catch (error) {
         return null;
     }
-}
+};
