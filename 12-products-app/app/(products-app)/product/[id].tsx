@@ -1,4 +1,7 @@
+import ProductImages from '@/presentation/products/components/ProductImages';
 import { useProduct } from '@/presentation/products/hooks/useProduct';
+import ThemedButton from '@/presentation/theme/components/ThemedButton';
+import ThemeButtonGroup from '@/presentation/theme/components/ThemedButtonGroup';
 import { ThemedView } from '@/presentation/theme/components/ThemedView';
 import ThemeTextInput from '@/presentation/theme/components/ThemeTextInput';
 import { Ionicons } from '@expo/vector-icons';
@@ -41,10 +44,13 @@ const ProductScreen = () => {
     return <Redirect href='/(products-app)/(home)'/>
   }
 
+  const product = productQuery.data!;
+
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <ScrollView >
-      {/* Todo Product Images */}
+      
+      <ProductImages images={product.images}/>
 
       <ThemedView style={{marginHorizontal: 10, marginTop: 20}}>
         <ThemeTextInput placeholder='Titulo' style={{marginVertical: 5}}/>
@@ -57,9 +63,33 @@ const ProductScreen = () => {
         <ThemeTextInput placeholder='Inventario' style={{flex: 1}}/>
       </ThemedView>
 
+      <ThemedView style={{marginHorizontal: 10}}>
+        <ThemeButtonGroup
+          options={['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL']}
+          selectedOptions={product.sizes}
+          onSelect={(options) => {console.log({options})}}
+        />
+
+        <ThemeButtonGroup
+          options={['kid', 'men', 'women', 'unisex']}
+          selectedOptions={[product.gender]}
+          onSelect={(options) => {console.log({options})}}
+        />
+      </ThemedView>
+
+
+      <View style={{
+        marginHorizontal: 10,
+        marginBottom: 50,
+        marginTop: 20
+      }}>
+        <ThemedButton icon='save-outline'>Guardar</ThemedButton>
+      </View>
+
       </ScrollView>
     </KeyboardAvoidingView>
   )
 }
 
-export default ProductScreen
+export default ProductScreen;
+
