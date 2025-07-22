@@ -10,7 +10,7 @@ import { Alert, KeyboardAvoidingView, ScrollView, useWindowDimensions, View } fr
 
 const LoginScreen = () => {
 
-  const { login } = useAuthStore()
+  const { login } = useAuthStore();
 
   const { height } = useWindowDimensions();
   const backgroudColor = useThemeColor({}, 'background');
@@ -22,7 +22,6 @@ const LoginScreen = () => {
   });
 
   const onLogin = async() => {
-    console.log(form)
     if (form.email.length === 0 || form.password.length === 0) return;
     
 
