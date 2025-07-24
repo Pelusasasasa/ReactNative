@@ -13,7 +13,6 @@ const CheckAuthenticationLayout = () => {
     }, [])
 
     if(status === 'checking'){
-        console.log(status);
         return ( 
             <View style={{
                 flex: 1,

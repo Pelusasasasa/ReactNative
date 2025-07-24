@@ -12,7 +12,6 @@ interface Props {
 const ThemedButtonGroup = ({ options, selectedOptions, onSelect}: Props) => {
 
   const primaryColor = useThemeColor({}, 'primary');
-  console.log({options, selectedOptions})
 
   return (
     <View style={styles.container}>
