@@ -1,13 +1,17 @@
+import { useCameraStore } from '@/presentation/store/useCameraStore';
 import { ThemedText } from '@/presentation/theme/components/ThemedText';
 import { useThemeColor } from '@/presentation/theme/hooks/useThemeColor';
 import { Ionicons } from '@expo/vector-icons';
 import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
 import { router } from 'expo-router';
 import { useRef, useState } from 'react';
 import { Alert, Image, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 
 export default function CameraScreen() {
+
+  const {addSelectedImage} = useCameraStore();
   const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
   const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
@@ -80,12 +84,32 @@ export default function CameraScreen() {
 
     await MediaLibrary.createAssetAsync(selectedCamera);
 
+    addSelectedImage(selectedCamera);
+
     router.dismiss();
   };
 
   function toggleCameraFacing() {
     setFacing(current => (current === 'back' ? 'front' : 'back'));
   };
+
+  const onPickImages = async() => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsMultipleSelection: true,
+      selectionLimit: 5,
+      aspect: [4, 3],
+      quality: 0.5,
+    });
+
+    if(result.canceled) return; 
+
+    result.assets.map(image => {
+      addSelectedImage(image.uri); 
+    });
+
+    router.dismiss()
+  }
 
   const retakeCancel = () => {
     setSelectedCamera(undefined);
@@ -107,7 +131,7 @@ export default function CameraScreen() {
       <CameraView ref={ camaraRef } style={styles.camera} facing={facing}>
           <ShutterButton onPress={onShutterButtonPress}/>
           <FlipCameraButton onPress={toggleCameraFacing}/>
-          <GalleryCameraButton onPress={() => {}}/>
+          <GalleryCameraButton onPress={onPickImages}/>
           <ReturnCancelButton onPress={returnCancel}/>
           {/* <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
             <Text style={styles.text}>Flip Camera</Text>

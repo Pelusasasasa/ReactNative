@@ -1,6 +1,7 @@
 import { Size } from '@/core/product/interface/Product';
 import ProductImages from '@/presentation/products/components/ProductImages';
 import { useProduct } from '@/presentation/products/hooks/useProduct';
+import { useCameraStore } from '@/presentation/store/useCameraStore';
 import MenuIconBotton from '@/presentation/theme/components/MenuIconBotton';
 import ThemedButton from '@/presentation/theme/components/ThemedButton';
 import ThemeButtonGroup from '@/presentation/theme/components/ThemedButtonGroup';
@@ -9,13 +10,20 @@ import ThemeTextInput from '@/presentation/theme/components/ThemeTextInput';
 import { Redirect, router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { Formik } from 'formik';
 import React, { useEffect } from 'react';
-import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, RefreshControl, ScrollView, View } from 'react-native';
 
 const ProductScreen = () => {
 
   const navigation = useNavigation();
   const { id } = useLocalSearchParams()
   const { productQuery, productMutation} = useProduct(`${id}`);
+  const {clearImages, selectedImages} = useCameraStore()
+
+  useEffect(() => {
+    return ()  => {
+      clearImages()
+    }
+  }, [])
 
   useEffect(() => {
     navigation.setOptions({
@@ -52,13 +60,27 @@ const ProductScreen = () => {
   return (
     <Formik
       initialValues={product}
-      onSubmit={productMutation.mutate}
+      onSubmit={(productLike) => {
+        productMutation.mutate({
+          ...productLike,
+          images: [...productLike.images, ...selectedImages]
+        })
+      }}
       >
         {({values, handleSubmit, handleChange, setFieldValue}) => (
           <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-            <ScrollView >
+            <ScrollView 
+              refreshControl={
+                <RefreshControl
+                  refreshing={ productQuery.isFetching } 
+                  onRefresh={async() => {
+                    await productQuery.refetch();
+                  }}
+                />
+              }
+            >
             
-            <ProductImages images={product.images}/>
+            <ProductImages images={[...product.images, ...selectedImages]}/>
 
             <ThemedView style={{marginHorizontal: 10, marginTop: 20}}>
               <ThemeTextInput placeholder='Titulo' style={{marginVertical: 5}} value={values.title} onChangeText={handleChange('title')}/>

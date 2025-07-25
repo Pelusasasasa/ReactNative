@@ -13,14 +13,55 @@ export const updateCreateProduct = async (product: Partial<Product>) => {
 
     return createProduct(product)
 
+};
+
+const prepareImages = async(images: string[]): Promise<string[]> => {
+
+    const fileImages = images.filter( image => image.includes('file'))
+    const currentImages = images.filter( image => !image.includes('file'))
+
+    if(fileImages.length > 0) {
+        const uploadPromises = fileImages.map(uploadImage);
+        const uploadedImages = await Promise.all(uploadPromises);
+
+
+        currentImages.push(...uploadedImages);
+    };
+
+    return currentImages.map(img => img.split('/').pop()!);
+};
+
+const uploadImage = async (image: string): Promise<string> => {
+
+    const formData = new FormData() as any;
+
+    formData.append('file', {
+        uri: image,
+        type: 'image/jpeg',
+        name: image.split('/').pop(),
+    });
+
+    const { data } = await productosApi.post<{image: string}>(
+        'files/product',
+        formData,
+        {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }
+    );
+
+    return data.image
 }
 
 async function updateProduct(product: Partial<Product>) {
         const {id, images = [], user, ...rest} = product;
-
+        
         try {
+            const checkedImages = await prepareImages(images);
             const { data } = await productosApi.patch(`/products/${id}`, {
                 ...rest,
+                images: checkedImages
             })
 
             return data;
@@ -28,13 +69,16 @@ async function updateProduct(product: Partial<Product>) {
             console.log(error);
             throw new Error("Error al actualizar el producto");
         }
-}
+};
+
 async function createProduct(product: Partial<Product>) {
         const {id, images = [], user, ...rest} = product;
 
         try {
+            const checkedImages = await prepareImages(images);
             const { data } = await productosApi.post(`/products`, {
                 ...rest,
+                images: checkedImages
             })
 
             return data;
