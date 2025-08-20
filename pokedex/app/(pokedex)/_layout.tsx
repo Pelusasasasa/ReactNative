@@ -1,13 +1,13 @@
 import React from 'react';
-import { Text, View } from 'react-native';
 
+import { Stack } from 'expo-router';
 import '../../global.css';
 
 const _layout = () => {
   return (
-    <View className='flex-1 justify-center items-center'>
-      <Text className='text-white text-xl'>_layout</Text>
-    </View>
+    <Stack>
+      <Stack.Screen name='index' />
+    </Stack>
   )
 }
 
